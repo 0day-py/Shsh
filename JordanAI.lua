@@ -1483,12 +1483,17 @@ local function closeKeyWindow()
         keyWindow.BackgroundTransparency = 0
     end)
 end
-
-enterButton.MouseButton1Click:Connect(function()
-    if keyBox.Text == "Key" then
-        closeKeyWindow()
-        openAiWindow()
         showPage("chat")
+
+enterButton.Activated:Connect(function()
+    local enteredKey = tostring(keyBox.Text or ""):gsub("^%s+", ""):gsub("%s+$", "")
+
+    if enteredKey == "Key" then
+        keyBox:ReleaseFocus()
+        keyWindow.Visible = false
+        aiWindow.Visible = true
+        showPage("chat")
+
         notify("AI companion initialized.", "success")
         addMessage(
             "System",
@@ -1498,9 +1503,6 @@ enterButton.MouseButton1Click:Connect(function()
         notify("Invalid key.", "error")
     end
 end)
-
-local MAX_CHAT_LEN = 190
-local lastTriggered = {}
 
 local function withinSpeechRange(otherPlayer)
     if settings.range <= 0 then
